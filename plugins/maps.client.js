@@ -11,7 +11,7 @@ export default function(ctx, inject) {
         if (mapWaiting) {
             renderMap(mapWaiting);
             mapWaiting = null;
-;        }
+        }
     };
     function addScript() {
         const script = document.createElement('script');
@@ -22,11 +22,11 @@ export default function(ctx, inject) {
     };
 
     function showMap(canvas, lat, lng) {
-        if (mapLoaded) renderMap(canvas, lat, lng);
+        if (mapLoaded) renderMap({ canvas, lat, lng });
         else mapWaiting = { canvas, lat, lng };
     }
 
-    function renderMap(canvas, lat, lng) {
+    function renderMap({ canvas, lat, lng }) {
         const mapOptions = {
             zoom: 18,
             center: new window.google.maps.LatLng(lat, lng),
