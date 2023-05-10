@@ -41,26 +41,20 @@ import ShortText from '../../components/ShortText.vue';
         };
     },
     async asyncData({ params, $dataApi, error }) {
-        const homeData = await $dataApi.getHome(params.id);
-        if (!homeData.ok)
-            return error({
-                statusCode: homeData.status,
-                message: homeData.statusText
-            });
+        const [homeData, reviewsData, userData] = await Promise.all([
+            $dataApi.getHome(params.id),
+            $dataApi.getReviewsByHomeId(params.id),
+            $dataApi.getUserByHomeId(params.id)
+        ]);
+        const badRes = [homeData, reviewsData, userData].find(res => !res.ok);
 
-        const reviewsData = await $dataApi.getReviewsByHomeId(params.id);
-        if (!reviewsData.ok)
+        if (badRes) {
             return error({
-                statusCode: reviewsData.status,
-                message: reviewsData.statusText
+                statusCode: badRes.status,
+                message: badRes.statusText
             });
+        }
 
-        const userData = await $dataApi.getUserByHomeId(params.id);
-        if (!userData.ok)
-            return error({
-                statusCode: userData.status,
-                message: userData.statusText
-            });
         return {
             home: homeData.json,
             reviews: reviewsData.json.hits,

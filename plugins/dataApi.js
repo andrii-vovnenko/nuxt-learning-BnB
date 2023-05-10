@@ -7,7 +7,12 @@ export default function(ctx, inject) {
     };
     const algoliaUrl = `https://${APP_ID}-dsn.algolia.net`;
 
-    inject('dataApi', { getHome, getReviewsByHomeId, getUserByHomeId });
+    inject('dataApi', {
+        getHome,
+        getReviewsByHomeId,
+        getUserByHomeId,
+        getHomesByLocations,
+    });
 
     async function getHome(homeId) {
         try {
@@ -74,6 +79,31 @@ export default function(ctx, inject) {
                     }),
                 },
             );
+
+            const data = await unWrap(response);
+
+            return data;
+        } catch(error) {
+            return getErrorResponse(error);
+        }
+    }
+
+    async function getHomesByLocations(lat, lng, radiusInMeters = 1500) {
+        try {
+            const response = await fetch(
+                `${algoliaUrl}/1/indexes/homes/query`,
+                {
+                    headers,
+                    method: 'POST',
+                    body: JSON.stringify({
+                        aroundLatLng: `${lat},${lng}`,
+                        aroundRadius: radiusInMeters,
+                        hitsPerPage: 10,
+                        attributesToHighlight: [],
+                    }),
+                },
+            );
+            
             const data = await unWrap(response);
 
             return data;

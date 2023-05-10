@@ -24,7 +24,7 @@
         },
         data() {
             return {
-                homes: homes.slice(0, 3),
+                homes: homes.slice(0, 5),
             }
         }
     }
