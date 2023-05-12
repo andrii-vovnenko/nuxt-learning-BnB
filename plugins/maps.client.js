@@ -44,7 +44,7 @@ export default function(ctx, inject) {
         document.head.appendChild(script);
     };
 
-    function showMap(canvas, lat, lng) {
+    function showMap(canvas, lat, lng, markers = []) {
         if (!isLoaded) {
             waiting.push({ fn: showMap, arguments });
             
@@ -56,11 +56,40 @@ export default function(ctx, inject) {
             center: new window.google.maps.LatLng(lat, lng),
             disableDefaultUI: true,
             zoomControl: true,
+            styles:[{
+                featureType: 'poi.business',
+                elementType: 'labels.icon',
+                stylers:[{ visibility: 'off' }]
+            }]
         };
 
         const map = new window.google.maps.Map(canvas, mapOptions);
-        const position = new window.google.maps.LatLng(lat, lng);
-        const marker = new window.google.maps.Marker({ position });
-        marker.setMap(map);
+        
+        if (!markers.length) {
+            const position = new window.google.maps.LatLng(lat, lng);
+            const marker = new window.google.maps.Marker({ position, clickable: false });
+            marker.setMap(map);
+            return;
+        }
+
+        const bounds = new window.google.maps.LatLngBounds();
+        markers.forEach(({
+            lat, lng, pricePerNight, id,
+        }) => {
+            const position = new window.google.maps.LatLng(lat, lng);
+            const marker = new window.google.maps.Marker({
+                position,
+                label: {
+                    text: `$${pricePerNight}`,
+                    className: `marker home-${id}`,
+                },
+                icon: 'https://maps.gstatic.com/mapfiles/transparent.png',
+                clickable: false, 
+            });
+            marker.setMap(map);
+            bounds.extend(position);
+        });
+
+        map.fitBounds(bounds);
     }
 }
