@@ -10,13 +10,11 @@
 </template>
 
 <script>
+    import pluralize from '../utils/pluralize.js';
+
     export default {
         methods: {
-            pluralize: (count, word) => {
-                const text = `${count} ${word}`;
-                if (Number(count) === 1) return text;
-                return `${text}s`;
-            },
+            pluralize
         },
         props: {
             home: {

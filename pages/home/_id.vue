@@ -1,40 +1,23 @@
 <template>
-    <div>
-        <div style="display: flex;">
-            <img v-for="image in home.images"
-                :key="image"
-                alt="some description"
-                :src="image"
-                style="width: 200px;height: 150px;"
-            />
-        </div>
-        {{ home.title }}<br/>
-        ${{ home.pricePerNight }} / nights<br/>
-        <img src="/images/marker.svg" width="20" height="20" />{{ home.location.address }} {{ home.location.city }} {{ home.location.state }} {{ home.location.country }} <br/>
-        <img src="/images/star.svg" width="20" height="20" />{{ home.reviewCount }}<br/>
-        {{ home.guests }} guest, {{ home.bedrooms }} rooms, {{ home.beds }} beds, {{  home.bathrooms }} bath <br/>
-        <div style="height: 800px; width: 800px;" ref="map"></div>
-        <div
-            v-for="review in reviews" :key="review.objectID"
-        >
-            <img :src="review.reviewer.image" /><br/>
-            {{  review.reviewer.name }} <br />
-            {{  formatDate(review.date) }} <br />
-            <short-text :text="review.comment" :target="150" /><br />
-        </div>
-        <div>
-            <img :src="user.image" /><br/>
-            {{ user.name }}<br/>
-            {{ formatDate(user.joined) }}<br/>
-            {{ user.reviewCount }}<br/>
-            {{ user.description }}<br/>
-        </div>
+    <div class="app-container">
+        <PropertyGallery :images="home.images" />
+        <PropertyDetails :home="home" />
+        <PropertyDescription :home="home" />
+        <PropertyMap :home="home" />
+        <PropertyReviews :reviews="reviews" />
+        <PropertyHost :user="user" />
     </div>
 </template>
 <script>
+import PropertyDescription from '../../components/PropertyDescription.vue';
+import PropertyDetails from '../../components/PropertyDetails.vue';
+import PropertyGallery from '../../components/PropertyGallery.vue';
+import PropertyHost from '../../components/PropertyHost.vue';
+import PropertyMap from '../../components/PropertyMap.vue';
+import PropertyReviews from '../../components/PropertyReviews.vue';
 import ShortText from '../../components/ShortText.vue';
 
-    export default {
+export default {
     head() {
         return {
             title: this.home.title
@@ -61,18 +44,14 @@ import ShortText from '../../components/ShortText.vue';
             user: userData.json.hits[0],
         };
     },
-    mounted() {
-        this.$maps.showMap(this.$refs.map, this.home._geoloc.lat, this.home._geoloc.lng);
-    },
-    methods: {
-        formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString(undefined, {
-                month: "long",
-                year: "numeric",
-            });
-        }
-    },
-    components: { ShortText }
+    components: {
+        ShortText,
+        PropertyGallery,
+        PropertyDetails,
+        PropertyDescription,
+        PropertyMap,
+        PropertyReviews,
+        PropertyHost
+    }
 }
 </script>
