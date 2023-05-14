@@ -1,18 +1,20 @@
 <template>
-    <div>
-        Results for {{ label }} <br />
-        <div style="height: 800px; width: 800px; float: right;" ref="map"></div>
-        <div v-if="homes.length">
-            <nuxt-link v-for="home in homes" :key="home.objectID" :to="`/home/${home.objectID}`">
-                <home-row
+    <div class="app-search-results-page">
+        <div class="app-search-results">
+            <div class="app-search-results-listing">
+                <h2 class="app-title">Stays in {{ label }}</h2>
+                <nuxt-link v-for="home in homes" :key="home.objectID" :to="`/home/${home.objectID}`">
+                <HomeRow
                     :home="home"
                     @mouseover.native="highlightMarker(home.objectID, true)"
                     @mouseout.native="highlightMarker(home.objectID, false)"
+                    class="app-house"
                 />
             </nuxt-link>
-        </div>
-        <div v-else>
-            No results found
+            </div>
+            <div class="app-search-results-map">
+                <div class="app-map" ref="map"></div>
+            </div>
         </div>
      </div>
 </template>
@@ -45,7 +47,7 @@ import HomeRow from '../components/HomeRow.vue';
 
         };
     },
-    components: { HomeRow },
+    components: { HomeRow, HomeRow },
     mounted() {
         this.updateMap();
     },
@@ -54,6 +56,7 @@ import HomeRow from '../components/HomeRow.vue';
             this.$maps.showMap(this.$refs.map, this.lat, this.lng, this.getHomeMarkers());
         },
         getHomeMarkers() {
+            if (!this.homes.length) return null;
             return this.homes.map(({ _geoloc, pricePerNight, objectID: id  }) => ({
                 ..._geoloc,
                 pricePerNight,
