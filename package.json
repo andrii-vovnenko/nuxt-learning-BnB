@@ -1,6 +1,8 @@
 {
     "name": "learn-nuxt",
     "dependencies": {
+        "cookie": "^0.5.0",
+        "google-auth-library": "^8.8.0",
         "js-cookie": "^3.0.5",
         "nuxt": "2.16.3"
     },

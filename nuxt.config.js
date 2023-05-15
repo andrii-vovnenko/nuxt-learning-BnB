@@ -31,4 +31,5 @@ export default {
         },
     },
     privateRuntimeConfig: {},
+    modules: ['~/modules/auth.js'],
 }
