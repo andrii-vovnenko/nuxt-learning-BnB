@@ -13,9 +13,12 @@
                 </button> 
             </div>
             <div class="app-user-menu">
-                <img src="/images/icons/house.svg" />
-                <div class="name">Host</div>
-                <div id="googleButton"></div>
+                <template v-if="isLoggedIn">
+                    <img src="/images/icons/house.svg" />
+                    <div class="name">Host</div>
+                    <img :src="user.profileUrl" class="avatar" />
+                </template>
+                <div v-show="!isLoggedIn" id="googleButton" class="ml-8"></div>
             </div>
         </header>
         <nuxt/>
@@ -23,6 +26,15 @@
 </template>
 <script>
     export default {
+        computed: {
+            user() {
+                const user = this.$store.state.auth.user;
+                return user;
+            },
+            isLoggedIn() {
+                return this.$store.state.auth.isLoggedIn;    
+            }
+        },
         methods: {
             changed(event) {
                 const place = event.detail;

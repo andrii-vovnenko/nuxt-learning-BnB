@@ -1,6 +1,12 @@
-export default ({ $config }) => {
+import Cookies from "js-cookie";
+
+export default ({ $config, store }, inject) => {
   window.initAuth = init;
   addScript();
+
+  inject('auth', {
+    signOut
+  });
 
   function addScript() {
     const script = document.createElement("script");
@@ -15,15 +21,40 @@ export default ({ $config }) => {
         plugin_name: 'test',
         client_id: $config.auth.clientId,
       });
-      window.gapi.signin2.render('googleButton', {
+
+      auth2.currentUser.listen(parseUser);
+    });
+
+    window.gapi.signin2.render('googleButton', {
         onsuccess: parseUser
       });
-    });
   }
 
   function parseUser(user) {
     const profile = user.getBasicProfile();
-    console.log(profile.getName());
-    console.log(profile.getImageUrl());
+
+    if (!user.isSignedIn()) {
+      Cookies.remove($config.auth.cookieName);
+      store.commit('auth/user', null);
+      return;
+    }
+
+    store.commit('auth/user', {
+      fullName: profile.getName(),
+      profileUrl: profile.getImageUrl(),
+    });
+
+    const idToken = user.getAuthResponse().id_token;
+
+    Cookies.set(
+      $config.auth.cookieName,
+      idToken,
+      { expires: 1/24, sameSite: 'Lax' },
+    );
   }
+
+  function signOut() {
+    const auth2 = window.gapi.auth2.getAuthInstance();
+    auth2.signOut();
+  };
 };

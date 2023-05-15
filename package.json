@@ -1,6 +1,7 @@
 {
     "name": "learn-nuxt",
     "dependencies": {
+        "js-cookie": "^3.0.5",
         "nuxt": "2.16.3"
     },
     "scripts": {
