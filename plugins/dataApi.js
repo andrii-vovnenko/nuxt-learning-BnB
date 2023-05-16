@@ -1,6 +1,8 @@
-export default function(ctx, inject) {
-    const APP_ID = 'I126SVACJ8';
-    const API_KEY = 'acef1cc6627095b7f168b481258d78af';
+import { getErrorResponse, unWrap  } from '../utils/fetchUtils';
+
+export default function({ $config }, inject) {
+    const APP_ID = $config.algolia.appId;
+    const API_KEY = $config.algolia.key;
     const headers = {
         'X-Algolia-API-Key': API_KEY,
         'X-Algolia-Application-Id': APP_ID,
@@ -25,23 +27,6 @@ export default function(ctx, inject) {
         } catch (error) {
             return getErrorResponse(error);
         }
-    }
-
-    async function unWrap(response) {
-        const json = await response.json();
-        const { ok, status, statusText } = response;
-        return {
-            json, ok, status, statusText,
-        }
-    }
-
-    function getErrorResponse(error) {
-        return {
-            ok: false,
-            status: 500,
-            statusText: error.message,
-            json: {}
-        };
     }
 
     async function getReviewsByHomeId(homeId) {

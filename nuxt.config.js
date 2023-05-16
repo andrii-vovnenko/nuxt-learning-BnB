@@ -29,7 +29,16 @@ export default {
             cookieName: 'idToken',
             clientId: '391392456949-23drd2h1upjtn22gt9s9fibblnuo62cl.apps.googleusercontent.com'
         },
+        algolia: {
+            appId: 'I126SVACJ8',
+            key: 'acef1cc6627095b7f168b481258d78af',
+        },
     },
-    privateRuntimeConfig: {},
-    modules: ['~/modules/auth.js'],
+    privateRuntimeConfig: {
+        algolia: {
+            appId: 'I126SVACJ8',
+            key: '751a7bfeedbb7131d65d3da453b4ccef',
+        },
+    },
+    modules: ['~/modules/auth.js', '~/modules/algolia.js'],
 }
