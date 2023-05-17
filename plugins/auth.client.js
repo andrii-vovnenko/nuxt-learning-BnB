@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { unWrap } from "../utils/fetchUtils";
 
 export default ({ $config, store }, inject) => {
   window.initAuth = init;
@@ -30,27 +31,34 @@ export default ({ $config, store }, inject) => {
       });
   }
 
-  function parseUser(user) {
-    const profile = user.getBasicProfile();
-
+  async function parseUser(user) {
+    console.log('ppp', user.isSignedIn());
     if (!user.isSignedIn()) {
       Cookies.remove($config.auth.cookieName);
       store.commit('auth/user', null);
       return;
     }
 
-    store.commit('auth/user', {
-      fullName: profile.getName(),
-      profileUrl: profile.getImageUrl(),
-    });
-
-    const idToken = user.getAuthResponse().id_token;
+    const idToken = user?.getAuthResponse().id_token;
 
     Cookies.set(
       $config.auth.cookieName,
       idToken,
       { expires: 1/24, sameSite: 'Lax' },
     );
+
+    try {
+      const response = await unWrap(await fetch('/api/user'));
+      user = response.json;
+      console.log({ user });
+      store.commit('auth/user', {
+        fullName: user.name,
+        profileUrl: user.image,
+      });
+    } catch(e) {
+      console.log(e);
+    }
+
   }
 
   function signOut() {
